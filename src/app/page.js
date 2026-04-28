@@ -1,65 +1,107 @@
-import Image from "next/image";
+// src/app/page.js
+"use client";
 
-export default function Home() {
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import "./page.css";
+
+export default function HomePage() {
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const [audio, setAudio] = useState(null);
+
+  // Инициализация музыки
+  useEffect(() => {
+    // Создаём аудио объект (можно заменить на свой файл)
+    const audioElement = new Audio("/sounds/background-music.mp3");
+    audioElement.loop = true;
+    audioElement.volume = 0.3;
+    setAudio(audioElement);
+
+    return () => {
+      if (audioElement) {
+        audioElement.pause();
+      }
+    };
+  }, []);
+
+  const toggleMusic = () => {
+    if (audio) {
+      if (isMusicPlaying) {
+        audio.pause();
+      } else {
+        audio.play();
+      }
+      setIsMusicPlaying(!isMusicPlaying);
+    }
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="home-container">
+      {/* Фоновый градиент */}
+      <div className="background-gradient"></div>
+      
+      {/* Основной контент */}
+      <div className="hero-section">
+        <div className="logo-container">
+          <div className="logo-icon">🎮</div>
+          <h1 className="game-title">Кинотест</h1>
+          <p className="game-subtitle">Проверь свои знания о фильмах и мемах</p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Карточки выбора режима */}
+        <div className="modes-container">
+          <Link href="/film" className="mode-card mode-films">
+            <div className="mode-icon">🎬</div>
+            <h2 className="mode-title">Фильмы</h2>
+            <p className="mode-description">
+              Угадай фильм по кадру и цитатам
+            </p>
+            <div className="mode-stats">
+              <span>⭐ 15+ вопросов</span>
+              <span>🎯 Проверь себя</span>
+            </div>
+            <div className="play-button">Начать →</div>
+          </Link>
+
+          <Link href="/memes" className="mode-card mode-memes">
+            <div className="mode-icon">😂</div>
+            <h2 className="mode-title">Мемы</h2>
+            <p className="mode-description">
+              Узнай, откуда взялся популярный мем
+            </p>
+            <div className="mode-stats">
+              <span>⭐ 10+ вопросов</span>
+              <span>🔥 Скоро</span>
+            </div>
+            <div className="play-button coming-soon">Скоро →</div>
+          </Link>
         </div>
-      </main>
+
+        {/* Панель управления */}
+        <div className="control-panel">
+          <button 
+            onClick={toggleMusic} 
+            className={`music-btn ${isMusicPlaying ? 'playing' : 'paused'}`}
+          >
+            <span className="music-icon">
+              {isMusicPlaying ? '🔊' : '🔇'}
+            </span>
+            <span className="music-text">
+              {isMusicPlaying ? 'Выключить музыку' : 'Включить музыку'}
+            </span>
+          </button>
+          
+          <div className="info-text">
+            <span>🎓 Образовательный режим</span>
+            <span>⚡ Без рекламы</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Подвал */}
+      <footer className="footer">
+        <p>Создано с ❤️ для тестирования знаний</p>
+      </footer>
     </div>
   );
 }
